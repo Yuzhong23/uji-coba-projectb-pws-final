@@ -1,4 +1,4 @@
-const { getApiKeyDetails } = require('../models/apiKeyModel');
+const { ApiKey } = require('../models');
 
 const requireApiKey = async (req, res, next) => {
   // Cek API Key di Header
@@ -9,8 +9,8 @@ const requireApiKey = async (req, res, next) => {
   }
 
   try {
-    // Validasi API Key ke database menggunakan Model
-    const keyData = await getApiKeyDetails(apiKey);
+    // Validasi API Key ke database menggunakan Sequelize
+    const keyData = await ApiKey.findOne({ where: { api_key: apiKey } });
 
     if (!keyData) {
       return res.status(401).json({ error: 'API Key tidak valid' });

@@ -1,22 +1,21 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const { getUserByEmail, createUser } = require('../models/userModel');
-const { createApiKey } = require('../models/apiKeyModel');
+const { User, ApiKey } = require('../models');
 
 // Registrasi User
 const register = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const existingUser = await getUserByEmail(email);
+    const existingUser = await User.findOne({ where: { email } });
     if (existingUser) return res.status(400).json({ error: 'Email sudah terdaftar' });
 
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
 
-    const newUser = await createUser(email, passwordHash);
+    const newUser = await User.create({ email, password_hash: passwordHash });
 
-    res.status(201).json({ message: 'Registrasi berhasil', user: newUser });
+    res.status(201).json({ message: 'Registrasi berhasil', user: { id: newUser.id, email: newUser.email } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Terjadi kesalahan pada server' });
@@ -27,7 +26,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await getUserByEmail(email);
+    const user = await User.findOne({ where: { email } });
     if (!user) return res.status(400).json({ error: 'Email tidak ditemukan' });
 
     const validPassword = await bcrypt.compare(password, user.password_hash);
@@ -46,11 +45,11 @@ const login = async (req, res) => {
 const generateApiKey = async (req, res) => {
   const userId = req.user.id;
   const randomHex = crypto.randomBytes(16).toString('hex');
-  const apiKey = `sk_live_${randomHex}`;
+  const apiKeyStr = `sk_live_${randomHex}`;
 
   try {
-    const newKey = await createApiKey(userId, apiKey);
-    res.status(201).json({ message: 'API Key berhasil dibuat', data: newKey });
+    const newKey = await ApiKey.create({ user_id: userId, api_key: apiKeyStr });
+    res.status(201).json({ message: 'API Key berhasil dibuat', data: { api_key: newKey.api_key, created_at: newKey.created_at } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Terjadi kesalahan pada server' });
