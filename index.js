@@ -1,6 +1,7 @@
 require('dotenv').config({ override: true });
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const db = require('./src/models');
 const authRoutes = require('./src/routes/authRoutes');
 const flightRoutes = require('./src/routes/flightRoutes');
@@ -11,6 +12,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public'))); // Serve static frontend files
 
 // Vercel Serverless Database Connection Logic (seperti di referensi Anda)
 let databaseReady = false;
@@ -36,11 +38,6 @@ app.use(async (req, res, next) => {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/flights', flightRoutes);
-
-// Test route
-app.get('/', (req, res) => {
-  res.json({ message: '🚀 Welcome to Flight & Aviation Tracking API (Serverless Ready)' });
-});
 
 // Ekspor app untuk Vercel Serverless
 module.exports = app;

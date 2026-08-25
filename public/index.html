@@ -1,0 +1,85 @@
+<!DOCTYPE strict>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroTrack API | Flight Data Provider</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+
+    <div class="container">
+        <header class="glass-panel">
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.2-1.1.6L3 8l6 3.1-4.8 4.8-3.4-.6-1.5 1.5 5 1.5 1.5 5 1.5-1.5-.6-3.4 4.8-4.8 3.1 6 1.2-.7.4-1.1-.1-.5z"/></svg>
+                <h1>AeroTrack <span>API</span></h1>
+            </div>
+            <div class="header-status" id="loginStatus">Not Logged In</div>
+        </header>
+
+        <main>
+            <!-- Auth Section -->
+            <section class="glass-panel card" id="authSection">
+                <h2>Developer Portal</h2>
+                <p class="subtitle">Daftarkan akun untuk mendapatkan akses ke live aviation data.</p>
+                
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('login')">Login</button>
+                    <button class="tab-btn" onclick="switchTab('register')">Register</button>
+                </div>
+
+                <form id="authForm" onsubmit="handleAuth(event)">
+                    <div class="input-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" required placeholder="developer@mail.com">
+                    </div>
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" required placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="btn primary-btn" id="authBtn">Masuk Sekarang</button>
+                </form>
+                <div id="authMessage" class="message"></div>
+            </section>
+
+            <!-- Dashboard Section (Hidden by default) -->
+            <section class="glass-panel card hidden" id="dashboardSection">
+                <div class="dashboard-header">
+                    <h2>Dashboard Anda</h2>
+                    <button class="btn logout-btn" onclick="logout()">Logout</button>
+                </div>
+                
+                <div class="api-key-container">
+                    <div class="key-info">
+                        <h3>API Key Aktif</h3>
+                        <p class="subtitle">Gunakan key ini di header <code>x-api-key</code> saat request.</p>
+                    </div>
+                    <div class="key-display">
+                        <input type="text" id="apiKeyInput" readonly placeholder="Belum ada API Key (Generate sekarang)">
+                        <button class="btn generate-btn" onclick="generateKey()">Generate Baru</button>
+                    </div>
+                </div>
+
+                <div class="test-container">
+                    <h3>Uji Coba API (Live Data)</h3>
+                    <p class="subtitle">Ambil 5 data penerbangan terbaru dari server.</p>
+                    <button class="btn secondary-btn" onclick="testApi()">Fetch Flights Data</button>
+                    <div class="code-window">
+                        <div class="window-header">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                            <span class="window-title">GET /api/flights</span>
+                        </div>
+                        <pre><code id="apiResponse">// Hasil JSON akan muncul di sini...</code></pre>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
